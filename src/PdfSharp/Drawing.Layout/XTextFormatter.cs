@@ -194,6 +194,14 @@ namespace PdfSharp.Drawing.Layout
                     blockLength = 0;
                     _blocks.Add(new Block(BlockType.LineBreak));
                 }
+                else if (ch == Chars.Hyphen)
+                {
+                    string token = _text.Substring(startIndex, blockLength + 1); // +1 to include the hyphen
+                    _blocks.Add(new Block(token, BlockType.Hyphen,
+                          _gfx.MeasureString(token, _font).Width));
+                    startIndex = idx + 1;
+                    blockLength = 0;
+                }
                 // The non-breaking space is whitespace, so we treat it like non-whitespace.
                 else if (ch != Chars.NonBreakableSpace && char.IsWhiteSpace(ch))
                 {
@@ -251,23 +259,50 @@ namespace PdfSharp.Drawing.Layout
                 else
                 {
                     double width = block.Width;
-                    if ((x + width <= rectWidth || x == 0) && block.Type != BlockType.LineBreak)
-                    {
-                        block.Location = new XPoint(x, y);
-                        x += width + _spaceWidth;
-                    }
-                    else
+                    if (block.Type == BlockType.LineBreak || (x + width > rectWidth && x != 0))
                     {
                         AlignLine(firstIndex, idx - 1, rectWidth);
                         firstIndex = idx;
+                        x = 0;
                         y += _lineSpace;
                         if (y > rectHeight)
                         {
                             block.Stop = true;
                             break;
                         }
-                        block.Location = new XPoint(0, y);
-                        x = width + _spaceWidth;
+                    }
+
+                    block.Location = new XPoint(x, y);
+
+                    // Adjust X to after block
+                    if (block.Type == BlockType.Hyphen)
+                        x += width;
+                    else
+                        x += width + _spaceWidth;
+
+                    // didnt fit.. Let's try and wrap it around
+                    if (block.Location.X + block.Width > rectWidth)
+                    {
+                        int cnt;
+                        for (cnt = block.Text.Length - 1;
+                            cnt > 0;
+                            cnt--)
+                        {
+                            string tmp = block.Text.Substring(0, cnt);
+                            var tmpSize = _gfx.MeasureString(tmp, Font);
+                            if (tmpSize.Width <= rectWidth)
+                            {
+                                Block rb = new Block(tmp, BlockType.Text, tmpSize.Width);
+                                rb.Location = block.Location;
+                                Block nb = new Block(block.Text.Substring(cnt), block.Type, block.Width - tmpSize.Width);
+                                _blocks.RemoveAt(idx);
+                                _blocks.Insert(idx, rb);
+                                _blocks.Insert(idx + 1, new Block(BlockType.LineBreak));
+                                _blocks.Insert(idx + 2, nb);
+                                count = _blocks.Count;
+                                break;
+                            }
+                        }
                     }
                 }
             }
