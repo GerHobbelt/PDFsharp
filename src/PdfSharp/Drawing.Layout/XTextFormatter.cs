@@ -259,7 +259,7 @@ namespace PdfSharp.Drawing.Layout
                 else
                 {
                     double width = block.Width;
-                    if (block.Type == BlockType.LineBreak || (x + width > rectWidth && x != 0))
+                    if (x + width > rectWidth && x != 0)
                     {
                         AlignLine(firstIndex, idx - 1, rectWidth);
                         firstIndex = idx;
