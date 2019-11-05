@@ -198,6 +198,7 @@
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\TokenizerHelper.cs" />
     <Compile Include="Pdf.AcroForms\enums\PdfAcroFieldFlags.cs" />
+    <Compile Include="Pdf.AcroForms\enums\TextAlignment.cs" />
     <Compile Include="Pdf.AcroForms\PdfAcroField.cs" />
     <Compile Include="Pdf.AcroForms\PdfAcroForm.cs" />
     <Compile Include="Pdf.AcroForms\PdfButtonField.cs" />

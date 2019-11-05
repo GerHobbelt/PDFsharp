@@ -560,6 +560,9 @@
     <Compile Include="..\PdfSharp\Internal\DoubleUtil.cs">
       <Link>Internal\DoubleUtil.cs</Link>
     </Compile>
+    <Compile Include="..\PdfSharp\Pdf.AcroForms\enums\TextAlignment.cs">
+      <Link>Pdf.AcroForms\enums\TextAlignment.cs</Link>
+    </Compile>
     <Compile Include="..\PdfSharp\Internal\Lock.cs">
       <Link>Internal\Lock.cs</Link>
     </Compile>
