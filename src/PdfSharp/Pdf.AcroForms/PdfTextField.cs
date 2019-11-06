@@ -248,7 +248,7 @@ namespace PdfSharp.Pdf.AcroForms
                             // Note: Page origin [0,0] is bottom left !
                             if (text.Length > 0)
                             {
-                                var xRect = new XRect(rect.X1, widget.Page.Height.Point - rect.Y2, rect.Width, rect.Height);
+                                var xRect = new XRect(rect.X1, widget.Page.Height.Point - Math.Max(rect.Y1, rect.Y2), rect.Width, Math.Abs(rect.Height));
                                 if (widget.Rotation != 0 && (widget.Flags & PdfAnnotationFlags.NoRotate) == 0)
                                 {
                                     gfx.RotateAtTransform(-widget.Rotation, xRect.TopLeft);
