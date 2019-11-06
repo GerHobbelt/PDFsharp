@@ -189,7 +189,7 @@ namespace PdfSharp.Pdf
             }
             else
             {
-#if true_
+#if true
                 // original code
                 // Case: Page is from an external document -> import it.
                 PdfPage importPage = page;
