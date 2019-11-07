@@ -568,7 +568,7 @@ namespace PdfSharp.Pdf.AcroForms
                     else
                         // ok, we bite the bullet and embed a new font (so at least the correct characters should show up, although with the possibly wrong font)
                         // TODO: Reasearch how to get the correct glyph indices for embedded fonts
-                        font = new XFont(BaseContentFontName.TrimStart('/'), Math.Max(1.0, fontSize));     // Avoid Exception, if size is zero
+                        font = new XFont(BaseContentFontName.TrimStart('/'), Math.Max(1.0, fontSize), GetFontStyle(BaseContentFontName));     // Avoid Exception, if size is zero
                 }
             }
             catch
@@ -595,6 +595,23 @@ namespace PdfSharp.Pdf.AcroForms
                     return true;
             }
             return false;
+        }
+
+        private XFontStyle GetFontStyle(string baseContentFontName)
+        {
+            //Debug.WriteLine($"FontStyle {FullyQualifiedName} {baseContentFontName}");
+
+            bool isBold = baseContentFontName.IndexOf("Bold") >= 0;
+            bool isItalic = baseContentFontName.IndexOf("Italic") >= 0;
+
+            if (isBold && isItalic)
+                return XFontStyle.BoldItalic;
+            else if (isBold)
+                return XFontStyle.Bold;
+            else if (isItalic)
+                return XFontStyle.Italic;
+
+            return XFontStyle.Regular;
         }
 
         /// <summary>
