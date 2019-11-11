@@ -53,7 +53,7 @@ namespace PdfSharp.Drawing.BarCodes
         /// <param name="text">String - The text to be coded</param>
         /// <param name="size">XSize - The size of the bar code</param>
         /// <param name="direction">CodeDirection - Indicates the direction to draw the bar code</param>
-        /// <param name="code128Code">Code_128_Code_Types - Indicates which of the codes to use when rendering the bar code.
+        /// <param name="code128Code">Code_128_Code_Types - Indicates which of the codes to use when rendering the bar code.</param>
         public Code128(string text, XSize size, CodeDirection direction, Code128CodeType code128Code)
         : this(text, size, direction, code128Code, false)
         {
