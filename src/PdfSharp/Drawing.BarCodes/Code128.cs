@@ -66,8 +66,10 @@ namespace PdfSharp.Drawing.BarCodes
         /// <param name="code128Code">Code_128_Code_Types - Indicates which of the codes to use when rendering the bar code.
         /// The options are A, B, or buffer.</param>
         public Code128(string text, XSize size, CodeDirection direction, Code128CodeType code128Code, bool isUCC)
-        : this(null, text, size, direction, code128Code)
+        : base(text, size, direction)
         {
+            if (Patterns == null) Load();
+            this.Code128Code = code128Code;
             this.Text = text;
             text = isUCC ? PrepareGS1Text(text) : text;
 
@@ -82,22 +84,6 @@ namespace PdfSharp.Drawing.BarCodes
             BarCode = ParseTextToBarCode(text);
 
             CheckValues();
-        }
-
-        /// <summary>Constructor</summary>
-        /// <param name="values">byte[] - The values to be rendered</param>
-        /// <param name="text">string - The text to be rendered</param>
-        /// <param name="size">XSize - The size of the bar code</param>
-        /// <param name="direction">CodeDirection - Indicates the direction to draw the bar code</param>
-        /// <param name="code128Code">Code_128_Code_Types - Indicates which of the codes to use when rendering the bar code.
-        /// The options are A, B, or buffer.</param>
-        public Code128(byte[] values, string text, XSize size, CodeDirection direction, Code128CodeType code128Code)
-        : base(text, size, direction)
-        {
-            if (!Enum.IsDefined(typeof(Code128CodeType), code128Code)) throw new ArgumentOutOfRangeException("Parameter code128Code (Code_128_Code_Types) is invalid");
-            if (Patterns == null) Load();
-            Code128Code = code128Code;
-            //Values = values;
         }
 
         /// <summary>
