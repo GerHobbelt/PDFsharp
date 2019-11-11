@@ -64,6 +64,7 @@ namespace PdfSharp.Drawing.BarCodes
         /// <param name="size">XSize - The size of the bar code</param>
         /// <param name="direction">CodeDirection - Indicates the direction to draw the bar code</param>
         /// <param name="code128Code">Code_128_Code_Types - Indicates which of the codes to use when rendering the bar code.
+        /// <param name="isUCC">Set barcode to GS1 EAN/UCC</param>
         /// The options are A, B, or buffer.</param>
         public Code128(string text, XSize size, CodeDirection direction, Code128CodeType code128Code, bool isUCC)
         : base(text, size, direction)
@@ -229,6 +230,7 @@ namespace PdfSharp.Drawing.BarCodes
         /// Get start code
         /// </summary>
         /// <param name="text"></param>
+        /// <param name="type"></param>
         /// <returns></returns>
         private Code128CodeType GetStartCode(string text, Code128CodeType type)
         {
