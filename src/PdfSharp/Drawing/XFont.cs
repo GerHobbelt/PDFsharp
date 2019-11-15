@@ -339,7 +339,7 @@ namespace PdfSharp.Drawing
 #if GDI  // TODO: In CORE build it is not necessary to create a GDI font at all
             // Create font by using font family.
             XFontSource fontSource;  // Not needed here.
-            _gdiFont = FontHelper.CreateFont(_familyName, (float)_emSize, (GdiFontStyle)(_style & XFontStyle.BoldItalic), out fontSource);
+            _gdiFont = FontHelper.CreateFont(_familyName, (float)_emSize, (GdiFontStyle)(_style), out fontSource);
 #endif
 #if WPF && !SILVERLIGHT  // Pure WPF
             _wpfFontFamily = _glyphTypeface.FontFamily.WpfFamily;
