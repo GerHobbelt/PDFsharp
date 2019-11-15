@@ -246,10 +246,10 @@ namespace PdfSharp.Pdf.IO
             // https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PDF32000_2008.pdf 7.3.8
             
             // Verify stream length and resolve if bad
-            string nendstream = $"{'\n'}endstream";
-            string rendstream = $"{'\r'}endstream";
-            string rnendstream = $"{'\r'}{'\n'}endstream";
-            string endstream = "endstream";
+            const string nendstream = "\nendstream";
+            const string rendstream = "\rendstream";
+            const string rnendstream = "\r\nendstream";
+            const string endstream = "endstream";
 
 			string postStream = ReadRawString(pos + length, rnendstream.Length);
             
@@ -260,7 +260,7 @@ namespace PdfSharp.Pdf.IO
 
             if (!bValid)
             {
-                string[] endstreamValues = { nendstream, rendstream, endstream };
+                string[] endstreamValues = { nendstream, rendstream, rnendstream, endstream };
 
                 int IndexOfEndStream(string val)
                 {
@@ -278,8 +278,7 @@ namespace PdfSharp.Pdf.IO
 
                     return offset;
                 }
-
-
+                
 				// find the first endstream occurrence
 				// first check to see if it is within the specified stream length.
                 int idxOffset = IndexOfEndStream(postStream);
@@ -315,24 +314,6 @@ namespace PdfSharp.Pdf.IO
             return bytes;
         }
 
-        private static readonly string[] endstreamValues = { "\nendstream", "\rendstream", "endstream" };
-        private int IndexOfEndStream(string val)
-        {
-            // Find the smallest value
-            int offset = -1;
-
-            foreach (var es in endstreamValues)
-            {
-                int o = val.IndexOf(es, StringComparison.Ordinal);
-                if (o < offset || offset == -1)
-                {
-                  offset = o;
-                }
-            }
-
-            return offset;
-        }
-
         /// <summary>
         /// Reads a string in raw encoding.
         /// </summary>
@@ -340,8 +321,9 @@ namespace PdfSharp.Pdf.IO
         {
             _pdfSteam.Position = position;
             byte[] bytes = new byte[length];
-            _pdfSteam.Read(bytes, 0, length);
-            return PdfEncoders.RawEncoding.GetString(bytes, 0, bytes.Length);
+            int rdLen = _pdfSteam.Read(bytes, 0, length);
+            Debug.Assert(rdLen <= length && rdLen >= 0);
+            return PdfEncoders.RawEncoding.GetString(bytes, 0, rdLen);
         }
 
         /// <summary>
