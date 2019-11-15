@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PdfSharp.Performance.Profile": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\temp\\testDocs\\0_984626.pdf \"C:\\temp\\testDocs\\facility specific4.pdf\" C:\\temp\\testDocs\\e41573.pdf \"C:\\temp\\testDocs\\information. .pdf\""
+    }
+  }
+}
