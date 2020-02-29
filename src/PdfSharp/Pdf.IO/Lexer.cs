@@ -34,6 +34,7 @@ using System.Text;
 using System.IO;
 using PdfSharp.Internal;
 using PdfSharp.Pdf.Internal;
+using System.Threading.Tasks;
 
 #pragma warning disable 1591
 
@@ -315,15 +316,63 @@ namespace PdfSharp.Pdf.IO
         }
 
         /// <summary>
+        /// Reads the raw content of a stream asynchronously.
+        /// </summary>
+        public async Task<byte[]> ReadStreamAsync(int length)
+        {
+            int pos;
+
+            // Skip illegal blanks behind «stream».
+            while (_currChar == Chars.SP)
+                ScanNextChar(true);
+
+            // Skip new line behind «stream».
+            if (_currChar == Chars.CR)
+            {
+                if (_nextChar == Chars.LF)
+                    pos = _idxChar + 2;
+                else
+                    pos = _idxChar + 1;
+            }
+            else
+                pos = _idxChar + 1;
+
+            _pdfSteam.Position = pos;
+            byte[] bytes = new byte[length];
+            int read = await _pdfSteam.ReadAsync(bytes, 0, length);
+            Debug.Assert(read == length);
+            // With corrupted files, read could be different from length.
+            if (bytes.Length != read)
+            {
+                Array.Resize(ref bytes, read);
+            }
+
+            // Synchronize idxChar etc.
+            Position = pos + read;
+            return bytes;
+        }
+
+        /// <summary>
         /// Reads a string in raw encoding.
         /// </summary>
-        public String ReadRawString(int position, int length)
+        public string ReadRawString(int position, int length)
         {
             _pdfSteam.Position = position;
             byte[] bytes = new byte[length];
             int rdLen = _pdfSteam.Read(bytes, 0, length);
             Debug.Assert(rdLen <= length && rdLen >= 0);
             return PdfEncoders.RawEncoding.GetString(bytes, 0, rdLen);
+        }
+
+        /// <summary>
+        /// Reads a string in raw encoding asynchronously.
+        /// </summary>
+        public async Task<string> ReadRawStringAsync(int position, int length)
+        {
+            _pdfSteam.Position = position;
+            byte[] bytes = new byte[length];
+            await _pdfSteam.ReadAsync(bytes, 0, length);
+            return PdfEncoders.RawEncoding.GetString(bytes, 0, bytes.Length);
         }
 
         /// <summary>

@@ -900,7 +900,12 @@ namespace PdfSharp.Pdf
             }
 
             foreach (PdfReference xref2 in kids)
+            {
+                if (xref2 == iref) //#10 - self-referencing array - file might be corrupt
+                    return new PdfDictionary[0];
+
                 list.AddRange(GetKids(xref2, values, kid));
+            }
             int count = list.Count;
             Debug.Assert(count == kid.Elements.GetInteger("/Count"));
             return list.ToArray();

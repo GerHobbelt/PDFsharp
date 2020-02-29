@@ -313,14 +313,13 @@ namespace PdfSharp.Pdf
         /// <summary>
         /// Saves the document to the specified stream.
         /// </summary>
-        public void Save(Stream stream, bool closeStream)
+        public void Save(Stream stream, bool closeStream = false)
         {
             if (!CanModify)
                 throw new InvalidOperationException(PSSR.CannotModify);
 
             // TODO: more diagnostic checks
-            string message = "";
-            if (!CanSave(ref message))
+            if (!CanSave(out string message))
                 throw new PdfSharpException(message);
 
             // Get security handler if document gets encrypted.
@@ -353,16 +352,6 @@ namespace PdfSharp.Pdf
                 if (writer != null)
                     writer.Close(closeStream);
             }
-        }
-
-        /// <summary>
-        /// Saves the document to the specified stream.
-        /// The stream is not closed by this function.
-        /// (Older versions of PDFsharp closes the stream. That was not very useful.)
-        /// </summary>
-        public void Save(Stream stream)
-        {
-            Save(stream, false);
         }
 
         /// <summary>
@@ -491,9 +480,9 @@ namespace PdfSharp.Pdf
         /// <summary>
         /// Determines whether the document can be saved.
         /// </summary>
-        public bool CanSave(ref string message)
+        public bool CanSave(out string message)
         {
-            if (!SecuritySettings.CanSave(ref message))
+            if (!SecuritySettings.CanSave(out message))
                 return false;
 
             return true;

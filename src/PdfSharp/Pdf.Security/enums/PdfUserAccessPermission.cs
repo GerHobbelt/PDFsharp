@@ -35,12 +35,12 @@ namespace PdfSharp.Pdf.Security
     /// Specifies which operations are permitted when the document is opened with user access.
     /// </summary>
     [Flags]
-    internal enum PdfUserAccessPermission
+    internal enum PdfUserAccessPermission : uint
     {
         /// <summary>
         /// Permits everything. This is the default value.
         /// </summary>
-        PermitAll = -3, // = 0xFFFFFFFC,
+        PermitAll = 0xFFFFFFFC,
 
         // Bit 1–2 Reserved; must be 0.
 

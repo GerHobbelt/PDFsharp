@@ -95,12 +95,12 @@ namespace PdfSharp.Pdf.Security
         {
             get
             {
-                PdfUserAccessPermission permission = (PdfUserAccessPermission)Elements.GetInteger(Keys.P);
-                if ((int)permission == 0)
+                var permission = (PdfUserAccessPermission)Elements.GetUInteger(Keys.P);
+                if (permission == 0u)
                     permission = PdfUserAccessPermission.PermitAll;
                 return permission;
             }
-            set { Elements.SetInteger(Keys.P, (int)value); }
+            set { Elements.SetUInteger(Keys.P, (uint)value); }
         }
 
         /// <summary>
@@ -128,14 +128,11 @@ namespace PdfSharp.Pdf.Security
                 GetType();
 #endif
 
-            PdfDictionary dict;
-            PdfArray array;
-            PdfStringObject str;
-            if ((dict = value as PdfDictionary) != null)
+            if (value is PdfDictionary dict)
                 DecryptDictionary(dict);
-            else if ((array = value as PdfArray) != null)
+            else if (value is PdfArray array)
                 DecryptArray(array);
-            else if ((str = value as PdfStringObject) != null)
+            else if (value is PdfStringObject str)
             {
                 if (str.Length != 0)
                 {
@@ -154,14 +151,11 @@ namespace PdfSharp.Pdf.Security
 
             foreach (KeyValuePair<string, PdfItem> item in dict.Elements)
             {
-                PdfString value1;
-                PdfDictionary value2;
-                PdfArray value3;
-                if ((value1 = item.Value as PdfString) != null)
+                if (item.Value is PdfString value1)
                     DecryptString(value1);
-                else if ((value2 = item.Value as PdfDictionary) != null)
+                else if (item.Value is PdfDictionary value2)
                     DecryptDictionary(value2);
-                else if ((value3 = item.Value as PdfArray) != null)
+                else if (item.Value is PdfArray value3)
                     DecryptArray(value3);
             }
             if (dict.Stream != null && dict.Stream.Value.Length != 0)
@@ -179,14 +173,11 @@ namespace PdfSharp.Pdf.Security
             for (int idx = 0; idx < count; idx++)
             {
                 PdfItem item = array.Elements[idx];
-                PdfString value1;
-                PdfDictionary value2;
-                PdfArray value3;
-                if ((value1 = item as PdfString) != null)
+                if (item is PdfString value1)
                     DecryptString(value1);
-                else if ((value2 = item as PdfDictionary) != null)
+                else if (item is PdfDictionary value2)
                     DecryptDictionary(value2);
-                else if ((value3 = item as PdfArray) != null)
+                else if (item is PdfArray value3)
                     DecryptArray(value3);
             }
         }
@@ -259,7 +250,7 @@ namespace PdfSharp.Pdf.Security
             byte[] documentID = PdfEncoders.RawEncoding.GetBytes(Owner.Internals.FirstDocumentID);
             byte[] oValue = PdfEncoders.RawEncoding.GetBytes(Elements.GetString(Keys.O));
             byte[] uValue = PdfEncoders.RawEncoding.GetBytes(Elements.GetString(Keys.U));
-            int pValue = Elements.GetInteger(Keys.P);
+            uint pValue = Elements.GetUInteger(Keys.P);
             int rValue = Elements.GetInteger(Keys.R);
 
             if (inputPassword == null)
@@ -344,7 +335,7 @@ namespace PdfSharp.Pdf.Security
         /// <summary>
         /// Generates the user key based on the padded user password.
         /// </summary>
-        void InitWithUserPassword(byte[] documentID, string userPassword, byte[] ownerKey, int permissions, bool strongEncryption)
+        void InitWithUserPassword(byte[] documentID, string userPassword, byte[] ownerKey, uint permissions, bool strongEncryption)
         {
             InitEncryptionKey(documentID, PadPassword(userPassword), ownerKey, permissions, strongEncryption);
             SetupUserKey(documentID);
@@ -353,7 +344,7 @@ namespace PdfSharp.Pdf.Security
         /// <summary>
         /// Generates the user key based on the padded owner password.
         /// </summary>
-        void InitWithOwnerPassword(byte[] documentID, string ownerPassword, byte[] ownerKey, int permissions, bool strongEncryption)
+        void InitWithOwnerPassword(byte[] documentID, string ownerPassword, byte[] ownerKey, uint permissions, bool strongEncryption)
         {
             byte[] userPad = ComputeOwnerKey(ownerKey, PadPassword(ownerPassword), strongEncryption);
             InitEncryptionKey(documentID, userPad, ownerKey, permissions, strongEncryption);
@@ -396,7 +387,7 @@ namespace PdfSharp.Pdf.Security
         /// <summary>
         /// Computes the encryption key.
         /// </summary>
-        void InitEncryptionKey(byte[] documentID, byte[] userPad, byte[] ownerKey, int permissions, bool strongEncryption)
+        void InitEncryptionKey(byte[] documentID, byte[] userPad, byte[] ownerKey, uint permissions, bool strongEncryption)
         {
             //#if !SILVERLIGHT
             _ownerKey = ownerKey;
@@ -654,7 +645,7 @@ namespace PdfSharp.Pdf.Security
         {
             //#if !SILVERLIGHT
             Debug.Assert(_document._securitySettings.DocumentSecurityLevel != PdfDocumentSecurityLevel.None);
-            int permissions = (int)Permission;
+            var permissions = (uint)Permission;
             bool strongEncryption;
 
             if (_document._securitySettings.DocumentSecurityLevel == PdfDocumentSecurityLevel.Encrypted128BitAes)
@@ -693,10 +684,10 @@ namespace PdfSharp.Pdf.Security
                 _ownerPassword = _userPassword;
 
             // Correct permission bits
-            permissions |= (int)(strongEncryption ? (uint)0xfffff0c0 : (uint)0xffffffc0);
-            permissions &= unchecked((int)0xfffffffc);
+            permissions |= strongEncryption ? 0xfffff0c0 : 0xffffffc0;
+            permissions &= 0xfffffffc;
 
-            PdfInteger pValue = new PdfInteger(permissions);
+            var pValue = new PdfUInteger(permissions);
 
             Debug.Assert(_ownerPassword.Length > 0, "Empty owner password.");
             byte[] userPad = PadPassword(_userPassword);

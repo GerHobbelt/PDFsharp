@@ -87,7 +87,7 @@ namespace PdfSharp.Pdf.Security
         /// <summary>
         /// Determines whether the document can be saved.
         /// </summary>
-        internal bool CanSave(ref string message)
+        internal bool CanSave(out string message)
         {
             if (_documentSecurityLevel != PdfDocumentSecurityLevel.None)
             {
@@ -97,6 +97,7 @@ namespace PdfSharp.Pdf.Security
                     return false;
                 }
             }
+            message = null;
             return true;
         }
 

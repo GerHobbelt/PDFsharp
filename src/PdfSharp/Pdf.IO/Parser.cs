@@ -31,6 +31,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using PdfSharp.Internal;
 using PdfSharp.Pdf.Advanced;
 using PdfSharp.Pdf.Internal;
@@ -318,7 +319,151 @@ namespace PdfSharp.Pdf.IO
             return pdfObject;
         }
 
-        //public PdfObject ReadObject(PdfObject obj, bool includeReferences)
+        /// <summary>
+        /// Reads PDF object from input stream asynchronously.
+        /// </summary>
+        /// <param name="pdfObject">Either the instance of a derived type or null. If it is null
+        /// an appropriate object is created.</param>
+        /// <param name="objectID">The address of the object.</param>
+        /// <param name="includeReferences">If true, specifies that all indirect objects
+        /// are included recursively.</param>
+        /// <param name="fromObjecStream">If true, the objects is parsed from an object stream.</param>
+        public async Task<PdfObject> ReadObjectAsync(PdfObject pdfObject, PdfObjectID objectID, bool includeReferences, bool fromObjecStream)
+        {
+            int objectNumber = objectID.ObjectNumber;
+            int generationNumber = objectID.GenerationNumber;
+            if (!fromObjecStream)
+            {
+                MoveToObject(objectID);
+                objectNumber = ReadInteger();
+                generationNumber = ReadInteger();
+            }
+
+            // Always use object ID from iref table (see above).
+            objectNumber = objectID.ObjectNumber;
+            generationNumber = objectID.GenerationNumber;
+
+            if (!fromObjecStream)
+                ReadSymbol(Symbol.Obj);
+
+            bool checkForStream = false;
+            Symbol symbol = ScanNextToken();
+            switch (symbol)
+            {
+                case Symbol.BeginArray:
+                    PdfArray array;
+                    if (pdfObject == null)
+                        array = new PdfArray(_document);
+                    else
+                        array = (PdfArray)pdfObject;
+                    //PdfObject.RegisterObject(array, objectID, generation);
+                    pdfObject = ReadArray(array, includeReferences);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    break;
+
+                case Symbol.BeginDictionary:
+                    PdfDictionary dict;
+                    if (pdfObject == null)
+                        dict = new PdfDictionary(_document);
+                    else
+                        dict = (PdfDictionary)pdfObject;
+                    //PdfObject.RegisterObject(dict, objectID, generation);
+                    checkForStream = true;
+                    pdfObject = ReadDictionary(dict, includeReferences);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    break;
+
+                // Acrobat 6 Professional proudly presents: The Null object!
+                // Even with a one-digit object number an indirect reference «x 0 R» to this object is
+                // one character larger than the direct use of «null». Probable this is the reason why
+                // it is true that Acrobat Web Capture 6.0 creates this object, but obviously never 
+                // creates a reference to it!
+                case Symbol.Null:
+                    pdfObject = new PdfNullObject(_document);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    if (!fromObjecStream)
+                        ReadSymbol(Symbol.EndObj);
+                    return pdfObject;
+
+                // Empty object. Invalid PDF, but we need to handle it. Treat as null object.
+                case Symbol.EndObj:
+                    pdfObject = new PdfNullObject(_document);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    return pdfObject;
+
+                case Symbol.Boolean:
+                    pdfObject = new PdfBooleanObject(_document, String.Compare(_lexer.Token, Boolean.TrueString, StringComparison.OrdinalIgnoreCase) == 0);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    if (!fromObjecStream)
+                        ReadSymbol(Symbol.EndObj);
+                    return pdfObject;
+
+                case Symbol.Integer:
+                    pdfObject = new PdfIntegerObject(_document, _lexer.TokenToInteger);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    if (!fromObjecStream)
+                        ReadSymbol(Symbol.EndObj);
+                    return pdfObject;
+
+                case Symbol.UInteger:
+                    pdfObject = new PdfUIntegerObject(_document, _lexer.TokenToUInteger);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    if (!fromObjecStream)
+                        ReadSymbol(Symbol.EndObj);
+                    return pdfObject;
+
+                case Symbol.Real:
+                    pdfObject = new PdfRealObject(_document, _lexer.TokenToReal);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    if (!fromObjecStream)
+                        ReadSymbol(Symbol.EndObj);
+                    return pdfObject;
+
+                case Symbol.String:
+                case Symbol.UnicodeString:
+                case Symbol.HexString:
+                case Symbol.UnicodeHexString:
+                    pdfObject = new PdfStringObject(_document, _lexer.Token);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    if (!fromObjecStream)
+                        ReadSymbol(Symbol.EndObj);
+                    return pdfObject;
+
+                case Symbol.Name:
+                    pdfObject = new PdfNameObject(_document, _lexer.Token);
+                    pdfObject.SetObjectID(objectNumber, generationNumber);
+                    if (!fromObjecStream)
+                        ReadSymbol(Symbol.EndObj);
+                    return pdfObject;
+
+                case Symbol.Keyword:
+                    // Should not come here anymore.
+                    ParserDiagnostics.HandleUnexpectedToken(_lexer.Token);
+                    break;
+
+                default:
+                    // Should not come here anymore.
+                    ParserDiagnostics.HandleUnexpectedToken(_lexer.Token);
+                    break;
+            }
+            symbol = ScanNextToken();
+            if (symbol == Symbol.BeginStream)
+            {
+                PdfDictionary dict = (PdfDictionary)pdfObject;
+                Debug.Assert(checkForStream, "Unexpected stream...");
+
+                int length = GetStreamLength(dict);
+                byte[] bytes = await _lexer.ReadStreamAsync(length);
+
+                PdfDictionary.PdfStream stream = new PdfDictionary.PdfStream(bytes, dict);
+                dict.Stream = stream;
+                ReadSymbol(Symbol.EndStream);
+                symbol = ScanNextToken();
+            }
+            if (!fromObjecStream && symbol != Symbol.EndObj)
+                ParserDiagnostics.ThrowParserException(PSSR.UnexpectedToken(_lexer.Token));
+            return pdfObject;
+        }
 
         /// <summary>
         /// Reads the stream of a dictionary.
@@ -354,8 +499,7 @@ namespace PdfSharp.Pdf.IO
             if (value is PdfInteger)
                 return Convert.ToInt32(value);
 
-            PdfReference reference = value as PdfReference;
-            if (reference != null)
+            if (value is PdfReference reference)
             {
                 ParserState state = SaveState();
                 object pdf_obj = ReadObject(null, reference.ObjectID, false, false);
@@ -765,8 +909,7 @@ namespace PdfSharp.Pdf.IO
         /// </summary>
         private string ReadName()
         {
-            string name;
-            Symbol symbol = ScanNextToken(out name);
+            Symbol symbol = ScanNextToken(out string name);
             if (symbol != Symbol.Name)
                 ParserDiagnostics.HandleUnexpectedToken(name);
             return name;
@@ -913,10 +1056,9 @@ namespace PdfSharp.Pdf.IO
         /// </summary>
         internal void ReadIRefsFromCompressedObject(PdfObjectID objectID)
         {
-            PdfReference iref;
 
             Debug.Assert(_document._irefTable.ObjectTable.ContainsKey(objectID));
-            if (!_document._irefTable.ObjectTable.TryGetValue(objectID, out iref))
+            if (!_document._irefTable.ObjectTable.TryGetValue(objectID, out PdfReference iref))
             {
                 // We should never come here because the object stream must be a type 1 entry in the xref stream
                 // and iref was created before.
@@ -943,8 +1085,7 @@ namespace PdfSharp.Pdf.IO
             }
             Debug.Assert(iref.Value != null);
 
-            PdfObjectStream objectStreamStream = iref.Value as PdfObjectStream;
-            if (objectStreamStream == null)
+            if (!(iref.Value is PdfObjectStream objectStreamStream))
             {
                 Debug.Assert(((PdfDictionary)iref.Value).Elements.GetName("/Type") == "/ObjStm");
 
@@ -968,10 +1109,9 @@ namespace PdfSharp.Pdf.IO
         /// </summary>
         internal PdfReference ReadCompressedObject(PdfObjectID objectID, int index)
         {
-            PdfReference iref;
 #if true
             Debug.Assert(_document._irefTable.ObjectTable.ContainsKey(objectID));
-            if (!_document._irefTable.ObjectTable.TryGetValue(objectID, out iref))
+            if (!_document._irefTable.ObjectTable.TryGetValue(objectID, out PdfReference iref))
             {
                 throw new NotImplementedException("This case is not coded or something else went wrong");
             }
@@ -1024,8 +1164,7 @@ namespace PdfSharp.Pdf.IO
             }
             Debug.Assert(iref.Value != null);
 
-            PdfObjectStream objectStreamStream = iref.Value as PdfObjectStream;
-            if (objectStreamStream == null)
+            if (!(iref.Value is PdfObjectStream objectStreamStream))
             {
                 Debug.Assert(((PdfDictionary)iref.Value).Elements.GetName("/Type") == "/ObjStm");
 
@@ -1146,6 +1285,64 @@ namespace PdfSharp.Pdf.IO
             
 			// Read all trailers.
 			while (true)
+            {
+                PdfTrailer trailer = ReadXRefTableAndTrailer(_document._irefTable);
+                // 1st trailer seems to be the best.
+                if (_document._trailer == null)
+                    _document._trailer = trailer;
+                int prev = trailer != null ? trailer.Elements.GetInteger(PdfTrailer.Keys.Prev) : 0;
+                if (prev == 0)
+                    break;
+                //if (prev > lexer.PdfLength)
+                //  break;
+                _lexer.Position = prev;
+            }
+
+            return _document._trailer;
+        }
+
+        /// <summary>
+        /// Reads the cross-reference table(s) and their trailer dictionary or
+        /// cross-reference streams asynchronously.
+        /// </summary>
+        internal async Task<PdfTrailer> ReadTrailerAsync()
+        {
+            int length = _lexer.PdfLength;
+
+            // Implementation note 18 Appendix  H:
+            // Acrobat viewers require only that the %%EOF marker appear somewhere within the last 1024 bytes of the file.
+            int idx;
+            if (length < 1030)
+            {
+                // Reading the final 30 bytes should work for all files. But often it does not.
+                string trail = _lexer.ReadRawString(length - 31, 30); //lexer.Pdf.Substring(length - 30);
+                idx = trail.LastIndexOf("startxref", StringComparison.Ordinal);
+                _lexer.Position = length - 31 + idx;
+            }
+            else
+            {
+                // For larger files we read 1 kiB - in most cases we find "startxref" in that range.
+                string trail = await _lexer.ReadRawStringAsync(length - 1031, 1030);
+                idx = trail.LastIndexOf("startxref", StringComparison.Ordinal);
+                _lexer.Position = length - 1031 + idx;
+            }
+
+            // SAP sometimes creates files with a size of several MByte and places "startxref" somewhere in the middle...
+            if (idx == -1)
+            {
+                // If "startxref" was still not found yet, read the file completely.
+                string trail = await _lexer.ReadRawStringAsync(0, length);
+                idx = trail.LastIndexOf("startxref", StringComparison.Ordinal);
+                _lexer.Position = idx;
+            }
+            if (idx == -1)
+                throw new Exception("The StartXRef table could not be found, the file cannot be opened.");
+
+            ReadSymbol(Symbol.StartXRef);
+            _lexer.Position = ReadInteger();
+
+            // Read all trailers.
+            while (true)
             {
                 PdfTrailer trailer = ReadXRefTableAndTrailer(_document._irefTable);
                 // 1st trailer seems to be the best.
@@ -1387,8 +1584,7 @@ namespace PdfSharp.Pdf.IO
                             //!!!new 2018-03-14 begin
                             // Check if the object at the address has the correct ID and generation.
                             int idToUse = id;
-                            int idChecked, generationChecked;
-                            if (!CheckXRefTableEntry(position, id, generation, out idChecked, out generationChecked))
+                            if (!CheckXRefTableEntry(position, id, generation, out int idChecked, out int generationChecked))
                             {
                                 // Found the keyword "obj", but ID or generation did not match.
                                 // There is a tool where ID is off by one. In this case we use the ID from the object, not the ID from the XRef table.
@@ -1500,9 +1696,11 @@ namespace PdfSharp.Pdf.IO
             ReadStream(xrefStream);
 
             //xrefTable.Add(new PdfReference(objectID, position));
-            PdfReference iref = new PdfReference(xrefStream);
-            iref.ObjectID = objectID;
-            iref.Value = xrefStream;
+            PdfReference iref = new PdfReference(xrefStream)
+            {
+                ObjectID = objectID,
+                Value = xrefStream
+            };
             xrefTable.Add(iref);
 
             Debug.Assert(xrefStream.Stream != null);
@@ -1534,7 +1732,6 @@ namespace PdfSharp.Pdf.IO
             //    xrefTable.Add(new PdfReference(objectID, -1));
 
             int size = xrefStream.Elements.GetInteger(PdfCrossReferenceStream.Keys.Size);
-            PdfArray index = xrefStream.Elements.GetValue(PdfCrossReferenceStream.Keys.Index) as PdfArray;
             int prev = xrefStream.Elements.GetInteger(PdfCrossReferenceStream.Keys.Prev);
             PdfArray w = (PdfArray)xrefStream.Elements.GetValue(PdfCrossReferenceStream.Keys.W);
 
@@ -1544,7 +1741,7 @@ namespace PdfSharp.Pdf.IO
             int subsectionCount;
             int[][] subsections = null;
             int subsectionEntryCount = 0;
-            if (index == null)
+            if (!(xrefStream.Elements.GetValue(PdfCrossReferenceStream.Keys.Index) is PdfArray index))
             {
                 // Setup with default values.
                 subsectionCount = 1;
@@ -1615,11 +1812,12 @@ namespace PdfSharp.Pdf.IO
                     index2++;
 
                     PdfCrossReferenceStream.CrossReferenceStreamEntry item =
-                        new PdfCrossReferenceStream.CrossReferenceStreamEntry();
-
-                    item.Type = StreamHelper.ReadBytes(bytes, index2 * wsum, wsize[0]);
-                    item.Field2 = StreamHelper.ReadBytes(bytes, index2 * wsum + wsize[0], wsize[1]);
-                    item.Field3 = StreamHelper.ReadBytes(bytes, index2 * wsum + wsize[0] + wsize[1], wsize[2]);
+                        new PdfCrossReferenceStream.CrossReferenceStreamEntry
+                        {
+                            Type = StreamHelper.ReadBytes(bytes, index2 * wsum, wsize[0]),
+                            Field2 = StreamHelper.ReadBytes(bytes, index2 * wsum + wsize[0], wsize[1]),
+                            Field3 = StreamHelper.ReadBytes(bytes, index2 * wsum + wsize[0] + wsize[1], wsize[2])
+                        };
 
                     xrefStream.Entries.Add(item);
 
@@ -2035,9 +2233,11 @@ namespace PdfSharp.Pdf.IO
 
         private ParserState SaveState()
         {
-            ParserState state = new ParserState();
-            state.Position = _lexer.Position;
-            state.Symbol = _lexer.Symbol;
+            ParserState state = new ParserState
+            {
+                Position = _lexer.Position,
+                Symbol = _lexer.Symbol
+            };
             return state;
         }
 

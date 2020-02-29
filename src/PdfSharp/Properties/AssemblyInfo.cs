@@ -37,15 +37,15 @@ using System.Windows.Markup;
 
 [assembly: AssemblyTitle(PdfSharp.VersionInfo.Title)]
 [assembly: AssemblyVersion(PdfSharp.VersionInfo.Version)]
-[assembly: AssemblyDescription(PdfSharp.VersionInfo.Description)]
+[assembly: AssemblyDescription("PdfSharp for .NET Standard 2.0.")]
 [assembly: AssemblyConfiguration(PdfSharp.VersionInfo.Configuration)]
-[assembly: AssemblyCompany(PdfSharp.VersionInfo.Company)]
+[assembly: AssemblyCompany("")]
 #if DEBUG
-[assembly: AssemblyProduct(PdfSharp.ProductVersionInfo.Product + " (Debug Build)")]
+[assembly: AssemblyProduct("")]
 #else
   [assembly: AssemblyProduct(PdfSharp.ProductVersionInfo.Product)]
 #endif
-[assembly: AssemblyCopyright(PdfSharp.VersionInfo.Copyright)]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark(PdfSharp.VersionInfo.Trademark)]
 [assembly: AssemblyCulture(PdfSharp.VersionInfo.Culture)]
 
