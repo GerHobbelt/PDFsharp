@@ -32,11 +32,14 @@ namespace PdfSharp.Pdf.Annotations
     /// <summary>
     /// Represents a generic annotation. Used for annotation dictionaries unknown to PDFsharp.
     /// </summary>
-    internal sealed class PdfGenericAnnotation : PdfAnnotation
+    public sealed class PdfGenericAnnotation : PdfAnnotation
     {
-        //DMH 6/7/06
-        //Make this public so we can use it in PdfAnnotations to
-        //get the Meta data from existings annotations.
+        /// <summary>
+        ///DMH 6/7/06
+        ///Make this public so we can use it in PdfAnnotations to
+        ///get the Meta data from existings annotations.
+        /// </summary>
+        /// <param name="dict"></param>
         public PdfGenericAnnotation(PdfDictionary dict)
             : base(dict)
         { }
