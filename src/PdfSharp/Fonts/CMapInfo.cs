@@ -59,7 +59,7 @@ namespace PdfSharp.Fonts
                 for (int idx = 0; idx < length; idx++)
                 {
                     if (char.IsLowSurrogate(text, idx))
-                        continue; // Ignore the seccond char of a surrogate pair
+                        continue; // Ignore the second char of a surrogate pair
 
                     char ch = text[idx];
                     if (!CharacterToGlyphIndex.ContainsKey(ch))

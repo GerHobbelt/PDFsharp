@@ -299,7 +299,6 @@ namespace PdfSharp.Fonts.OpenType
             return (int)Math.Round(value * 1000.0 / FontFace.head.unitsPerEm);
         }
 
-
         public uint CharCodeToGlyphIndex(char highSurrogate, char lowSurrogate)
         {
             try

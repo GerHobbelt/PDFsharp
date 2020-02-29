@@ -59,7 +59,6 @@ namespace PdfSharp.Fonts.OpenType
         Wansung = 5,
         Johab = 6,
         UnicodeUSC_4 = 10
-
     }
 
     /// <summary>
@@ -142,7 +141,6 @@ namespace PdfSharp.Fonts.OpenType
             }
         }
     }
-
 
     /// <summary>
     /// CMap format 12: Segmented coverage.
@@ -267,7 +265,6 @@ namespace PdfSharp.Fonts.OpenType
                         else if (format == 12)
                         {
                             cmap12 = new CMap12(_fontData, encodingId);
-
                         }
                         _fontData.Position = currentPosition;
                         // We have found what we are looking for, so break.

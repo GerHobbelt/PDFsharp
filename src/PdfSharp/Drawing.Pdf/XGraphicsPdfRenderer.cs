@@ -552,7 +552,7 @@ namespace PdfSharp.Drawing.Pdf
                 for (int idx = 0; idx < s.Length; idx++)
                 {
                     if (char.IsLowSurrogate(s, idx))
-                        continue; // Ignore seccond char of Surrogate pair
+                        continue; // Ignore second char of Surrogate pair
 
                     char ch = s[idx];
                     if (isSymbolFont)
