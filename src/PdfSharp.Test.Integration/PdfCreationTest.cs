@@ -25,6 +25,7 @@ namespace PdfSharp.Test.Integration
             var password = "pass";
 
             var doc = new PdfDocument();
+#if !CORE
             var font = new XFont(GlobalFontSettings.DefaultFontName, 12, XFontStyle.Regular);
             for (int i = 1; i <= pageCount; i++)
             {
@@ -32,6 +33,14 @@ namespace PdfSharp.Test.Integration
                 var gfx = XGraphics.FromPdfPage(page);
                 gfx.DrawString($"Page {i}", font, XBrushes.Black, 25, 25);
             }
+#else
+            for (int i = 1; i <= pageCount; i++)
+            {
+                var page = doc.AddPage();
+                var gfx = XGraphics.FromPdfPage(page);
+                gfx.DrawRectangle(XBrushes.Black, 25, 25, 100, 100);
+            }
+#endif
             doc.SecuritySettings.DocumentSecurityLevel = Pdf.Security.PdfDocumentSecurityLevel.Encrypted128BitAes;
             doc.SecuritySettings.UserPassword = password;
             var path = Path.Combine("temp", "test.pdf");

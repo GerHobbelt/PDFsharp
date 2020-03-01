@@ -1,0 +1,13 @@
+﻿[*.cs]
+
+# PropertyDocumentationHeader: The property must have a documentation header.
+dotnet_diagnostic.PropertyDocumentationHeader.severity = warning
+
+# HAA0102: Non-overridden virtual method call on value type
+dotnet_diagnostic.HAA0102.severity = warning
+
+# MethodDocumentationHeader: The method must have a documentation header.
+dotnet_diagnostic.MethodDocumentationHeader.severity = warning
+
+# CS0618: 'FormattedText.FormattedText(string, CultureInfo, FlowDirection, Typeface, double, Brush)' is obsolete: 'Use the PixelsPerDip override'
+dotnet_diagnostic.CS0618.severity = warning

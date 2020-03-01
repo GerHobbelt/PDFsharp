@@ -1,21 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="fluentassertions" Version="5.4.1" />
-    <PackageReference Include="microsoft.net.test.sdk" Version="15.8.0" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0">
+    <PackageReference Include="fluentassertions" Version="5.10.2" />
+    <PackageReference Include="microsoft.net.test.sdk" Version="16.5.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PdfSharp\PDFsharp.csproj" />
+    <ProjectReference Include="..\PdfSharp-wpf\PdfSharp-wpf.csproj" />
+    <ProjectReference Include="..\PdfSharp.Charting-wpf\PdfSharp.Charting-wpf.csproj" />
   </ItemGroup>
 
   <ItemGroup>

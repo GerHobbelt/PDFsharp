@@ -23,7 +23,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
@@ -47,14 +47,14 @@ namespace PdfSharp
     {
         // How to use:
         // Create a function or property for each message text, depending on how many parameters are
-        // part of the message. For the beginning, type plain English text in the function or property. 
+        // part of the message. For the beginning, type plain English text in the function or property.
         // The use of functions is safe when a parameter must be changed. The compiler tells you all
         // places in your code that must be modified.
         // For localization, create an enum value for each function or property with the same name. Then
         // create localized message files with the enum values as messages identifiers. In the properties
         // and functions all text is replaced by Format or GetString functions with the corresponding enum value
-        // as first parameter. The use of enums ensures that typing errors in message resource names are 
-        // simply impossible. Use the TestResourceMessages function to ensure that each enum value has an 
+        // as first parameter. The use of enums ensures that typing errors in message resource names are
+        // simply impossible. Use the TestResourceMessages function to ensure that each enum value has an
         // appropriate message text.
 
         #region Helper functions
@@ -366,7 +366,7 @@ namespace PdfSharp
                             // Force the English language.
                             System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
 #endif
-#if !NETFX_CORE && !UWP
+#if !NETFX_CORE && !UWP && !WPF && !GDI
                             _resmngr = Properties.Resources.ResourceManager;
 #else
                             _resmngr = new ResourceManager("PdfSharp.Resources.Messages",

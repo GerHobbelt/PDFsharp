@@ -9,12 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PdfSharp</RootNamespace>
     <AssemblyName>PdfSharp</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -51,8 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="!internal\Directives.cs" />
     <Compile Include="!internal\Configuration.cs" />
+    <Compile Include="!internal\Directives.cs" />
     <Compile Include="!internal\TargetContext.cs" />
     <Compile Include="!JetBrains\Annotations.cs" />
     <Compile Include="Drawing.BarCodes\BarCode.cs" />
@@ -74,6 +70,11 @@
     <Compile Include="Drawing.BarCodes\MatrixCode.cs" />
     <Compile Include="Drawing.BarCodes\OmrData.cs" />
     <Compile Include="Drawing.BarCodes\ThickThinBarcodeRenderer.cs" />
+    <Compile Include="Drawing.Internal\IImageImporter.cs" />
+    <Compile Include="Drawing.Internal\ImageImporter.cs" />
+    <Compile Include="Drawing.Internal\ImageImporterBmp.cs" />
+    <Compile Include="Drawing.Internal\ImageImporterJpeg.cs" />
+    <Compile Include="Drawing.Internal\ImageImporterRoot.cs" />
     <Compile Include="Drawing.Layout\enums\XParagraphAlignment.cs" />
     <Compile Include="Drawing.Layout\XTextFormatter.cs" />
     <Compile Include="Drawing.Pdf\enums\DirtyFlags.cs" />
@@ -81,8 +82,6 @@
     <Compile Include="Drawing.Pdf\PdfGraphicsState.cs" />
     <Compile Include="Drawing.Pdf\XGraphicsPdfRenderer.cs" />
     <Compile Include="Drawing\CoreGraphicsPath.cs" />
-    <Compile Include="Drawing\enums\XSweepDirection.cs" />
-    <Compile Include="Drawing\enums\XStyleSimulations.cs" />
     <Compile Include="Drawing\enums\PathStart.cs" />
     <Compile Include="Drawing\enums\XColorSpace.cs" />
     <Compile Include="Drawing\enums\XCombineMode.cs" />
@@ -103,22 +102,21 @@
     <Compile Include="Drawing\enums\XPageDirection.cs" />
     <Compile Include="Drawing\enums\XSmoothingMode.cs" />
     <Compile Include="Drawing\enums\XStringAlignment.cs" />
+    <Compile Include="Drawing\enums\XStyleSimulations.cs" />
+    <Compile Include="Drawing\enums\XSweepDirection.cs" />
+    <Compile Include="Drawing\FontFamilyCache.cs" />
     <Compile Include="Drawing\FontFamilyInternal.cs" />
     <Compile Include="Drawing\FontHelper.cs" />
     <Compile Include="Drawing\GeometryHelper.cs" />
     <Compile Include="Drawing\GraphicsStateStack.cs" />
     <Compile Include="Drawing\ImageHelper.cs" />
     <Compile Include="Drawing\InternalGraphicsState.cs" />
-    <Compile Include="Drawing.Internal\IImageImporter.cs" />
-    <Compile Include="Drawing.Internal\ImageImporterBmp.cs" />
-    <Compile Include="Drawing.Internal\ImageImporterJpeg.cs" />
-    <Compile Include="Drawing.Internal\ImageImporter.cs" />
-    <Compile Include="Drawing.Internal\ImageImporterRoot.cs" />
     <Compile Include="Drawing\IXGraphicsRenderer.cs" />
     <Compile Include="Drawing\PdfFontOptions.cs" />
     <Compile Include="Drawing\XBitmapDecoder.cs" />
     <Compile Include="Drawing\XBitmapEncoder.cs" />
     <Compile Include="Drawing\XBitmapImage.cs" />
+    <Compile Include="Drawing\XBitmapSource.cs" />
     <Compile Include="Drawing\XBrush.cs" />
     <Compile Include="Drawing\XBrushes.cs" />
     <Compile Include="Drawing\XColor.cs" />
@@ -126,25 +124,21 @@
     <Compile Include="Drawing\XColors.cs" />
     <Compile Include="Drawing\XConvert.cs" />
     <Compile Include="Drawing\XFont.cs" />
-    <Compile Include="Drawing\FontFamilyCache.cs" />
     <Compile Include="Drawing\XFontFamily.cs" />
     <Compile Include="Drawing\XFontMetrics.cs" />
+    <Compile Include="Drawing\XFontSource.cs" />
     <Compile Include="Drawing\XFontStretch.cs" />
     <Compile Include="Drawing\XFontWeight.cs" />
     <Compile Include="Drawing\XFontWeights.cs" />
     <Compile Include="Drawing\XForm.cs" />
-    <Compile Include="Drawing\XFontSource.cs" />
-    <Compile Include="Drawing\XGradientBrush.cs" />
-    <Compile Include="Drawing\XRadialGradientBrush.cs" />
-    <Compile Include="Drawing\XTypeface.cs" />
     <Compile Include="Drawing\XGlyphTypeface.cs" />
+    <Compile Include="Drawing\XGradientBrush.cs" />
     <Compile Include="Drawing\XGraphics.cs" />
     <Compile Include="Drawing\XGraphicsContainer.cs" />
     <Compile Include="Drawing\XGraphicsPath.cs" />
     <Compile Include="Drawing\XGraphicsPathInternals.cs" />
     <Compile Include="Drawing\XGraphicsPathItem.cs" />
     <Compile Include="Drawing\XGraphicsState.cs" />
-    <Compile Include="Drawing\XBitmapSource.cs" />
     <Compile Include="Drawing\XImage.cs" />
     <Compile Include="Drawing\XImageFormat.cs" />
     <Compile Include="Drawing\XKnownColorTable.cs" />
@@ -155,11 +149,13 @@
     <Compile Include="Drawing\XPens.cs" />
     <Compile Include="Drawing\XPoint.cs" />
     <Compile Include="Drawing\XPrivateFontCollection.cs" />
+    <Compile Include="Drawing\XRadialGradientBrush.cs" />
     <Compile Include="Drawing\XRect.cs" />
     <Compile Include="Drawing\XSize.cs" />
     <Compile Include="Drawing\XSolidBrush.cs" />
     <Compile Include="Drawing\XStringFormat.cs" />
     <Compile Include="Drawing\XStringFormats.cs" />
+    <Compile Include="Drawing\XTypeface.cs" />
     <Compile Include="Drawing\XUnit.cs" />
     <Compile Include="Drawing\XVector.cs" />
     <Compile Include="Events\DocumentEvents.cs" />
@@ -168,12 +164,12 @@
     <Compile Include="Fonts.OpenType\FontDescriptor.cs" />
     <Compile Include="Fonts.OpenType\GenericFontTable.cs" />
     <Compile Include="Fonts.OpenType\GlyphDataTable.cs" />
-    <Compile Include="Fonts.OpenType\OpenTypeFontfaceCache.cs" />
     <Compile Include="Fonts.OpenType\GlyphTypefaceCache.cs" />
     <Compile Include="Fonts.OpenType\IndexToLocationTable.cs" />
     <Compile Include="Fonts.OpenType\IRefFontTable.cs" />
     <Compile Include="Fonts.OpenType\OpenTypeDescriptor.cs" />
     <Compile Include="Fonts.OpenType\OpenTypeFontface.cs" />
+    <Compile Include="Fonts.OpenType\OpenTypeFontfaceCache.cs" />
     <Compile Include="Fonts.OpenType\OpenTypeFontTable.cs" />
     <Compile Include="Fonts.OpenType\OpenTypeFontTables.cs" />
     <Compile Include="Fonts.OpenType\OpenTypeFontWriter.cs" />
@@ -182,21 +178,21 @@
     <Compile Include="Fonts\AdobeGlyphListForNewFonts.cs" />
     <Compile Include="Fonts\CMapInfo.cs" />
     <Compile Include="Fonts\enums\StandartType1Fonts.cs" />
-    <Compile Include="Fonts\FontResolvingOptions.cs" />
-    <Compile Include="Fonts\PlatformFontResolverInfo.cs" />
-    <Compile Include="Fonts\PlatformFontResolver.cs" />
-    <Compile Include="Fonts\FontResolverInfo.cs" />
-    <Compile Include="Fonts\IFontResolver.cs" />
-    <Compile Include="Fonts\GlobalFontSettings.cs" />
     <Compile Include="Fonts\FontDescriptorCache.cs" />
     <Compile Include="Fonts\FontFactory.cs" />
+    <Compile Include="Fonts\FontResolverInfo.cs" />
+    <Compile Include="Fonts\FontResolvingOptions.cs" />
     <Compile Include="Fonts\FontWriter.cs" />
-    <Compile Include="Internal\Lock.cs" />
-    <Compile Include="Internal\Diagnostics.cs" />
-    <Compile Include="Internal\DiagnosticsHelper.cs" />
+    <Compile Include="Fonts\GlobalFontSettings.cs" />
+    <Compile Include="Fonts\IFontResolver.cs" />
+    <Compile Include="Fonts\PlatformFontResolver.cs" />
+    <Compile Include="Fonts\PlatformFontResolverInfo.cs" />
     <Compile Include="Internal\Calc.cs" />
     <Compile Include="Internal\ColorHelper.cs" />
+    <Compile Include="Internal\Diagnostics.cs" />
+    <Compile Include="Internal\DiagnosticsHelper.cs" />
     <Compile Include="Internal\DoubleUtil.cs" />
+    <Compile Include="Internal\Lock.cs" />
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\TokenizerHelper.cs" />
     <Compile Include="Pdf.AcroForms\enums\PdfAcroFieldFlags.cs" />
@@ -214,10 +210,10 @@
     <Compile Include="Pdf.AcroForms\PdfSignatureField.cs" />
     <Compile Include="Pdf.AcroForms\PdfTextField.cs" />
     <Compile Include="Pdf.Actions\enums\PdfNamedActionNames.cs" />
-    <Compile Include="Pdf.Actions\PdfEmbeddedGoToAction.cs" />
-    <Compile Include="Pdf.Actions\PdfRemoteGoToAction.cs" />
-    <Compile Include="Pdf.Actions\PdfGoToAction.cs" />
     <Compile Include="Pdf.Actions\PdfAction.cs" />
+    <Compile Include="Pdf.Actions\PdfEmbeddedGoToAction.cs" />
+    <Compile Include="Pdf.Actions\PdfGoToAction.cs" />
+    <Compile Include="Pdf.Actions\PdfRemoteGoToAction.cs" />
     <Compile Include="Pdf.Advanced\IContentStream.cs" />
     <Compile Include="Pdf.Advanced\PdfCatalog.cs" />
     <Compile Include="Pdf.Advanced\PdfCIDFont.cs" />
@@ -295,9 +291,9 @@
     <Compile Include="Pdf.Filters\LzwDecode.cs" />
     <Compile Include="Pdf.Internal\AnsiEncoding.cs" />
     <Compile Include="Pdf.Internal\ColorSpaceHelper.cs" />
-    <Compile Include="Pdf.Internal\PdfDiagnostics.cs" />
     <Compile Include="Pdf.Internal\DocEncoding.cs" />
     <Compile Include="Pdf.Internal\GlobalObjectTable.cs" />
+    <Compile Include="Pdf.Internal\PdfDiagnostics.cs" />
     <Compile Include="Pdf.Internal\PdfEncoders.cs" />
     <Compile Include="Pdf.Internal\RawEncoding.cs" />
     <Compile Include="Pdf.Internal\RawUnicodeEncoding.cs" />
@@ -324,26 +320,26 @@
     <Compile Include="Pdf.Security\PdfStandardSecurityHandler.cs" />
     <Compile Include="Pdf.Structure\PdfAttributesBase.cs" />
     <Compile Include="Pdf.Structure\PdfLayoutAttributes.cs" />
-    <Compile Include="Pdf.Structure\PdfObjectReference.cs" />
     <Compile Include="Pdf.Structure\PdfMarkedContentReference.cs" />
+    <Compile Include="Pdf.Structure\PdfMarkInformation.cs" />
+    <Compile Include="Pdf.Structure\PdfObjectReference.cs" />
     <Compile Include="Pdf.Structure\PdfStructureElement.cs" />
     <Compile Include="Pdf.Structure\PdfStructureTreeRoot.cs" />
-    <Compile Include="Pdf.Structure\PdfMarkInformation.cs" />
     <Compile Include="Pdf.Structure\PdfTableAttributes.cs" />
     <Compile Include="Pdf\EntryInfoAttribute.cs" />
     <Compile Include="Pdf\enums\DocumentState.cs" />
-    <Compile Include="Pdf\enums\PdfFlateEncodeMode.cs" />
-    <Compile Include="Pdf\enums\PdfUseFlateDecoderForJpegImages.cs" />
     <Compile Include="Pdf\enums\PdfColorMode.cs" />
     <Compile Include="Pdf\enums\PdfCustomValueCompression.cs" />
+    <Compile Include="Pdf\enums\PdfFlateEncodeMode.cs" />
     <Compile Include="Pdf\enums\PdfFontEmbedding.cs" />
     <Compile Include="Pdf\enums\PdfFontEncoding.cs" />
-    <Compile Include="Pdf\enums\PdfPageDestinationType.cs" />
     <Compile Include="Pdf\enums\PdfOutlineStyle.cs" />
+    <Compile Include="Pdf\enums\PdfPageDestinationType.cs" />
     <Compile Include="Pdf\enums\PdfPageLayout.cs" />
     <Compile Include="Pdf\enums\PdfPageMode.cs" />
     <Compile Include="Pdf\enums\PdfReadingDirection.cs" />
     <Compile Include="Pdf\enums\PdfTextStringEncoding.cs" />
+    <Compile Include="Pdf\enums\PdfUseFlateDecoderForJpegImages.cs" />
     <Compile Include="Pdf\KeysBase.cs" />
     <Compile Include="Pdf\KeysMeta.cs" />
     <Compile Include="Pdf\PdfArray.cs" />
@@ -351,9 +347,6 @@
     <Compile Include="Pdf\PdfBooleanObject.cs" />
     <Compile Include="Pdf\PdfCustomValue.cs" />
     <Compile Include="Pdf\PdfCustomValues.cs" />
-    <Compile Include="Pdf\PdfMetadata.cs" />
-    <Compile Include="Pdf\PdfNumberTreeNode.cs" />
-    <Compile Include="Pdf\PdfNameTreeNode.cs" />
     <Compile Include="Pdf\PdfDate.cs" />
     <Compile Include="Pdf\PdfDictionary.cs" />
     <Compile Include="Pdf\PdfDocument.cs" />
@@ -364,18 +357,19 @@
     <Compile Include="Pdf\PdfIntegerObject.cs" />
     <Compile Include="Pdf\PdfItem.cs" />
     <Compile Include="Pdf\PdfLiteral.cs" />
+    <Compile Include="Pdf\PdfMetadata.cs" />
     <Compile Include="Pdf\PdfName.cs" />
     <Compile Include="Pdf\PdfNameObject.cs" />
+    <Compile Include="Pdf\PdfNameTreeNode.cs" />
     <Compile Include="Pdf\PdfNull.cs" />
     <Compile Include="Pdf\PdfNullObject.cs" />
     <Compile Include="Pdf\PdfNumber.cs" />
     <Compile Include="Pdf\PdfNumberObject.cs" />
+    <Compile Include="Pdf\PdfNumberTreeNode.cs" />
     <Compile Include="Pdf\PdfObject.cs" />
     <Compile Include="Pdf\PdfObjectID.cs" />
     <Compile Include="Pdf\PdfOutline.cs" />
-    <Compile Include="Pdf\PdfOutlineCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Pdf\PdfOutlineCollection.cs" />
     <Compile Include="Pdf\PdfPage.cs" />
     <Compile Include="Pdf\PdfPages.cs" />
     <Compile Include="Pdf\PdfReal.cs" />
@@ -410,7 +404,7 @@
     <Folder Include="Resources\images\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

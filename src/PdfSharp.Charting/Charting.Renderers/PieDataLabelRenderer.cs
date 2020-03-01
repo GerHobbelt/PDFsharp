@@ -106,7 +106,7 @@ namespace PdfSharp.Charting.Renderers
             {
                 if (dataLabel.Text != null)
                     gfx.DrawString(dataLabel.Text, font, fontColor, dataLabel.Rect, format);
-             }
+            }
         }
 
         /// <summary>

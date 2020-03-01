@@ -401,7 +401,7 @@ namespace PdfSharp.Drawing
 
             int count = value.Length;
             int valLen = 0;
-            for (; valLen < count;)
+            while (valLen < count)
             {
                 char ch = value[valLen];
                 if (ch == '.' || ch == '-' || ch == '+' || char.IsNumber(ch))

@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PdfSharp\PDFsharp.csproj" />
+    <ProjectReference Include="..\PdfSharp-wpf\PdfSharp-wpf.csproj" />
+    <ProjectReference Include="..\PdfSharp.Charting-wpf\PdfSharp.Charting-wpf.csproj" />
   </ItemGroup>
 
 </Project>
