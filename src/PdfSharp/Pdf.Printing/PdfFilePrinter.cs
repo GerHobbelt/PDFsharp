@@ -23,7 +23,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
 // THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
@@ -32,8 +32,8 @@
 #if true_
 namespace PdfSharp.Pdf.Printing
 {
-    // Some googled inforamtion about command line switches:
-    // 
+    // Some googled information about command line switches:
+    //
     // AcroRd32.exe filename                                   Executes the reader and displays a file.
     // AcroRd32.exe /p filename                                Executes the reader and prints a file.
     // AcroRd32.exe /t path printername drivername portname    Executes the reader and prints a file
@@ -42,11 +42,11 @@ namespace PdfSharp.Pdf.Printing
     //
     // The four parameters of the /t option evaluate to strings.
     // printername     The name of the Printer.
-    // drivername      Your printer drivers name i.e. whatever apperars in the Driver Used box when viewing printer properties.
+    // drivername      Your printer drivers name i.e. whatever appears in the Driver Used box when viewing printer properties.
     // portname        The printers port. portname cannot contain any "/" characters; if it does, output is routed to
     //                 the default port for that printer.
     //
-    //                                
+    //
     // Acrobat.exe /n    Launch a separate instance of the Acrobat application
     // Acrobat.exe /s    Open Acrobat suppressing the splash screen
     // Acrobat.exe /o    Open Acrobat suppressing the openfile dialog
@@ -180,7 +180,7 @@ namespace PdfSharp.Pdf.Printing
             catch (Exception ex)
             {
                 // ReSharper disable PossibleIntendedRethrow
-                throw ex;
+                throw;
                 // ReSharper restore PossibleIntendedRethrow
             }
         }
